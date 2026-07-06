@@ -111,8 +111,8 @@ jobs:
 
       - name: create rpms and specs folders as required
         run: |
-          mkdir -p rpms specs
-          chmod 777 rpms specs
+          mkdir -p specs
+          chmod 777 specs
 
       - name: generate specs
         run: |
