@@ -24,6 +24,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Follow main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          git fetch origin main
+          git checkout main
+          git pull origin main
 
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
@@ -60,11 +73,14 @@ jobs:
           DOCKER_DEFAULT_PLATFORM: linux/${{ matrix.arch }}
           DOCKER_BUILDKIT: 1
 
-      - name: Check for updates on specs
+      - name: check on changes
+        id: changed_files
         run: |
-          git diff --exit-code -- ./specs || exit 0
+          NUM_CHANGED_FILES=$(git diff --name-status specs | wc -l)
+          echo "Number of changed files: $NUM_CHANGED_FILES"
+          echo "num_changed_files=$NUM_CHANGED_FILES" >> $GITHUB_OUTPUT
 
-      - name: Calculate new minor release
+      - name: Calculate new minor release, unless 
         id: versioning
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -78,15 +94,13 @@ jobs:
           
           echo "New release tag: $NEW_TAG"
           echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+        if: ${{ steps.changed_files.outputs.num_changed_files > 0 }}
 
       - name: Update with new specs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           BRANCH_NAME="auto-update-$(date +%s)"
-          
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           
           git checkout -b $BRANCH_NAME
           git add specs
@@ -100,6 +114,7 @@ jobs:
             --base "main"
 
           gh pr merge --auto --squash --delete-branch "$BRANCH_NAME" || gh pr merge --squash --delete-branch "$BRANCH_NAME"
+        if: ${{ steps.changed_files.outputs.num_changed_files > 0 }}
 
       - name: Create new GitHub Release
         env:
@@ -111,4 +126,4 @@ jobs:
           gh release create "$NEW_TAG" \
             --title "Release $NEW_TAG" \
             --generate-notes
-        if: steps.versioning.outputs.new_tag != ''
+        if: ${{ steps.changed_files.outputs.num_changed_files > 0 }}

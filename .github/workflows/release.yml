@@ -178,7 +178,7 @@ jobs:
 
       - name: copy the spec to the place
         run: |
-          mkdir -p specs
+          rm -rf specs && mkdir specs
           cp all/${{ matrix.spec }} specs/
 
       # https://github.com/docker/setup-qemu-action
