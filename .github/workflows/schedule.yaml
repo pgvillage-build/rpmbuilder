@@ -62,7 +62,6 @@ jobs:
 
       - name: Check for updates on specs
         run: |
-          go mod tidy
           git diff --exit-code -- ./specs || exit 0
 
       - name: Calculate new minor release
@@ -92,7 +91,7 @@ jobs:
           git checkout -b $BRANCH_NAME
           git add specs
           git commit -m "chore: automatic update specs"
-          Git push origin $BRANCH_NAME
+          git push origin $BRANCH_NAME
 
           gh pr create \
             --title "Automated Update" \
@@ -100,7 +99,7 @@ jobs:
             --head "$BRANCH_NAME" \
             --base "main"
 
-          gh pr merge --auto --squash --delete-branch "$BRANCH_NAME"
+          gh pr merge --auto --squash --delete-branch "$BRANCH_NAME" || gh pr merge --squash --delete-branch "$BRANCH_NAME"
 
       - name: Create new GitHub Release
         env:
