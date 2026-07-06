@@ -1,0 +1,115 @@
+name: Weekly schedule to check for updates
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+env:
+  COMPOSE_DOCKER_CLI_BUILD: 1
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  builder_images:
+    strategy:
+      matrix:
+        include:
+          - baseimage: rockylinux
+            version: "9"
+            arch: arm64
+    env:
+      IMAGETAG: builder-${{ matrix.baseimage }}:${{ matrix.version }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # https://github.com/docker/setup-qemu-action
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@53851d14592bedcffcf25ea515637cff71ef929a # v3.3.0
+
+      # https://github.com/docker/setup-buildx-action
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@6524bf65af31da8d45b59e8c27de4bd072b392f5 # v3.8.0
+        with:
+          driver-opts: network=host
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/rpmtools
+          platforms: 'linux/${{ matrix.arch }}'
+          build-args: |
+            BASEIMAGE=${{ matrix.baseimage }}:${{ matrix.version }}
+          tags: ${{ env.IMAGETAG }}
+          outputs: type=docker,dest=${{ runner.temp }}/myimage.tar
+
+      - name: update to docker-compose v2
+        run: |
+          sudo apt-get install -y curl
+          sudo curl -SL https://github.com/docker/compose/releases/download/v2.34.0/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose --version
+
+      - name: generate specs
+        run: |
+          docker-compose up specgen --exit-code-from specgen
+        env:
+          DOCKER_DEFAULT_PLATFORM: linux/${{ matrix.arch }}
+          DOCKER_BUILDKIT: 1
+
+      - name: Check for updates on specs
+        run: |
+          go mod tidy
+          git diff --exit-code -- ./specs || exit 0
+
+      - name: Calculate new minor release
+        id: versioning
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          LATEST_TAG=$(gh release view --json tagName --jq '.tagName' 2>/dev/null || echo "v0.0.0")
+          echo "Latest release tag: $LATEST_TAG"
+          VERSION=${LATEST_TAG#v}
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+          NEW_MINOR=$((MINOR + 1))
+          NEW_TAG="v$MAJOR.$NEW_MINOR.0"
+          
+          echo "New release tag: $NEW_TAG"
+          echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+
+      - name: Update with new specs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH_NAME="auto-update-$(date +%s)"
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          git checkout -b $BRANCH_NAME
+          git add specs
+          git commit -m "chore: automatic update specs"
+          Git push origin $BRANCH_NAME
+
+          gh pr create \
+            --title "Automated Update" \
+            --body "Automated PR." \
+            --head "$BRANCH_NAME" \
+            --base "main"
+
+          gh pr merge --auto --squash --delete-branch "$BRANCH_NAME"
+
+      - name: Create new GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          NEW_TAG="${{ steps.versioning.outputs.new_tag }}"
+          
+          # Maak de release aan en genereer automatisch de changelog
+          gh release create "$NEW_TAG" \
+            --title "Release $NEW_TAG" \
+            --generate-notes
+        if: steps.versioning.outputs.new_tag != ''
