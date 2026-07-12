@@ -151,7 +151,7 @@ jobs:
           python scripts/minimal_speclist_as_json.py
           python scripts/minimal_speclist_as_json.py >> $GITHUB_OUTPUT
 
-  build_rpms:
+  build-rpms:
     strategy:
       matrix: ${{ fromJson(needs.build_matrix.outputs.mymatrix) }}
 
@@ -177,7 +177,7 @@ jobs:
 
       - name: copy the spec to the place
         run: |
-          mkdir -p specs
+          rm -rf specs && mkdir specs
           find all
           cp all/${{ matrix.spec }} specs/
 
@@ -233,6 +233,26 @@ jobs:
         with:
           files: |
             rpms/*
+
+  check-build-rpms-status:
+    runs-on: ubuntu-latest
+    needs: build-rpms
+    if: always()
+    steps:
+      - name: Evaluate build-rpm status
+        run: |
+          RESULT="${{ needs.build-rpms.result }}"
+          
+          echo "Build RPM result: $RESULT"
+
+          if [ "$RESULT" = "failure" ]; then
+            exit 1
+          elif [ "$RESULT" = "success" ] || [ "$RESULT" = "skipped" ]; then
+            exit 0
+          else
+            echo "Tests were cancelled."
+            exit 1
+          fi
 
   download_rpms:
     runs-on: ubuntu-latest
