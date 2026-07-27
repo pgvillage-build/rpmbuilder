@@ -80,23 +80,7 @@ jobs:
           echo "Number of changed files: $NUM_CHANGED_FILES"
           echo "num_changed_files=$NUM_CHANGED_FILES" >> $GITHUB_OUTPUT
 
-      - name: Calculate new minor release, unless 
-        id: versioning
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          LATEST_TAG=$(gh release view --json tagName --jq '.tagName' 2>/dev/null || echo "v0.0.0")
-          echo "Latest release tag: $LATEST_TAG"
-          VERSION=${LATEST_TAG#v}
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
-          NEW_MINOR=$((MINOR + 1))
-          NEW_TAG="v$MAJOR.$NEW_MINOR.0"
-          
-          echo "New release tag: $NEW_TAG"
-          echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
-        if: ${{ steps.changed_files.outputs.num_changed_files > 0 }}
-
-      - name: Update with new specs
+      - name: Create PR with new spec
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -107,23 +91,73 @@ jobs:
           git commit -m "chore: automatic update specs"
           git push origin $BRANCH_NAME
 
-          gh pr create \
-            --title "Automated Update" \
+          PR_URL=$(gh pr create \
+            --title "chore: Automated Update" \
             --body "Automated PR." \
             --head "$BRANCH_NAME" \
-            --base "main"
+            --base "main")
 
-          gh pr merge --auto --squash --delete-branch "$BRANCH_NAME" || gh pr merge --squash --delete-branch "$BRANCH_NAME"
+          echo "PR_URL=$PR_URL" >> $GITHUB_ENV
         if: ${{ steps.changed_files.outputs.num_changed_files > 0 }}
 
-      - name: Create new GitHub Release
+      - name: Merge PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          NEW_TAG="${{ steps.versioning.outputs.new_tag }}"
-          
-          # Maak de release aan en genereer automatisch de changelog
-          gh release create "$NEW_TAG" \
-            --title "Release $NEW_TAG" \
-            --generate-notes
+
+          gh pr merge --auto --squash --delete-branch "$PR_URL" || gh pr merge --squash --delete-branch "$PR_URL"
+
         if: ${{ steps.changed_files.outputs.num_changed_files > 0 }}
+
+      - name: Approve PR
+        run: gh pr review --approve "$PR_URL"
+        env:
+          GH_TOKEN: ${{ secrets.PAT_APPROVER }}
+        if: ${{ steps.changed_files.outputs.num_changed_files > 0 }}
+
+      - name: Wait for PR merge
+        run: |
+          gh pr check --watch "$PR_URL"
+
+          until [ "$(gh pr view "$PR_URL" --json state -q .state)" = "MERGED" ]; do
+            echo "Wachten tot PR gemerged is..."
+            sleep 3
+          done
+        if: ${{ steps.changed_files.outputs.num_changed_files > 0 }}
+
+      - name: Wait for Release Drafter
+        run: |
+          sleep 5
+
+          RUN_ID=$(gh run list \
+            --workflow "Draft release on push to main" \
+            --branch main \
+            --limit 1 \
+            --json databaseId \
+            -q '.[0].databaseId')
+
+          gh run watch "$RUN_ID" --exit-status
+        if: ${{ steps.changed_files.outputs.num_changed_files > 0 }}
+
+      - name: Find Draft Release
+        run: |
+          DRAFT_TAG=""
+          until [ -n "$DRAFT_TAG" ]; do
+            DRAFT_TAG=$(gh release list --json tagName,isDraft -q '.[] | select(.isDraft == true) | .tagName' | head -n 1)
+            if [ -z "$DRAFT_TAG" ]; then
+              echo "Waiting another 5 sec. for draft release."
+              sleep 5
+            fi
+          done
+
+          echo "Draft release tag: $DRAFT_TAG"
+          echo "DRAFT_TAG=$DRAT_TAG" >> $GITHUB_ENV
+        if: ${{ steps.changed_files.outputs.num_changed_files > 0 }}
+
+      - name: Release Draft release
+        run: |
+          gh release edit "$DRAFT_TAG" --draft=false
+          echo "Release $DRAFT_TAG published!"
+        if: ${{ steps.changed_files.outputs.num_changed_files > 0 }}
+        env:
+          GH_TOKEN: ${{ secrets.PAT_APPROVER }}
