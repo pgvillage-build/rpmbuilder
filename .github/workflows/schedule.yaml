@@ -117,7 +117,7 @@ jobs:
 
       - name: Wait for PR merge
         run: |
-          gh pr check --watch "$PR_URL"
+          gh pr checks --watch "$PR_URL"
 
           until [ "$(gh pr view "$PR_URL" --json state -q .state)" = "MERGED" ]; do
             echo "Wachten tot PR gemerged is..."
