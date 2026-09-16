@@ -116,6 +116,8 @@ jobs:
         if: ${{ steps.changed_files.outputs.num_changed_files > 0 }}
 
       - name: Wait for PR merge
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr checks --watch "$PR_URL"
 
@@ -126,6 +128,8 @@ jobs:
         if: ${{ steps.changed_files.outputs.num_changed_files > 0 }}
 
       - name: Wait for Release Drafter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           sleep 5
 
@@ -140,6 +144,8 @@ jobs:
         if: ${{ steps.changed_files.outputs.num_changed_files > 0 }}
 
       - name: Find Draft Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           DRAFT_TAG=""
           until [ -n "$DRAFT_TAG" ]; do
