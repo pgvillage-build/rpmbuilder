@@ -80,9 +80,16 @@ jobs:
           echo "Number of changed files: $NUM_CHANGED_FILES"
           echo "num_changed_files=$NUM_CHANGED_FILES" >> $GITHUB_OUTPUT
 
+      - name: Generate App Token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+
       - name: Create PR with new spec
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           BRANCH_NAME="auto-update-$(date +%s)"
           
@@ -156,7 +163,7 @@ jobs:
           done
 
           echo "Draft release tag: $DRAFT_TAG"
-          echo "DRAFT_TAG=$DRAT_TAG" >> $GITHUB_ENV
+          echo "DRAFT_TAG=$DRAFT_TAG" >> $GITHUB_ENV
         if: ${{ steps.changed_files.outputs.num_changed_files > 0 }}
 
       - name: Release Draft release
