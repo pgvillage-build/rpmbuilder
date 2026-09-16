@@ -82,14 +82,14 @@ jobs:
 
       - name: Create PR with new spec
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_APPROVER }}
         run: |
           BRANCH_NAME="auto-update-$(date +%s)"
           
           git checkout -b $BRANCH_NAME
           git add specs
           git commit -m "chore: automatic update specs"
-          git push origin $BRANCH_NAME
+          git push https://x-access-token:${{ secrets.PAT_CREATOR }}@github.com/${{ github.repository }}.git $BRANCH_NAME
 
           PR_URL=$(gh pr create \
             --title "chore: Automated Update" \
@@ -102,17 +102,16 @@ jobs:
 
       - name: Merge PR
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_APPROVER }}
         run: |
-
           gh pr merge --auto --squash --delete-branch "$PR_URL" || gh pr merge --squash --delete-branch "$PR_URL"
 
         if: ${{ steps.changed_files.outputs.num_changed_files > 0 }}
 
       - name: Approve PR
-        run: gh pr review --approve "$PR_URL"
         env:
-          GH_TOKEN: ${{ secrets.PAT_APPROVER }}
+          GITHUB_TOKEN: ${{ secrets.PAT_APPROVER }}
+        run: gh pr review --approve "$PR_URL"
         if: ${{ steps.changed_files.outputs.num_changed_files > 0 }}
 
       - name: Wait for PR merge
@@ -161,9 +160,9 @@ jobs:
         if: ${{ steps.changed_files.outputs.num_changed_files > 0 }}
 
       - name: Release Draft release
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_APPROVER }}
         run: |
           gh release edit "$DRAFT_TAG" --draft=false
           echo "Release $DRAFT_TAG published!"
         if: ${{ steps.changed_files.outputs.num_changed_files > 0 }}
-        env:
-          GH_TOKEN: ${{ secrets.PAT_APPROVER }}
