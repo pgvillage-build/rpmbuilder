@@ -1,5 +1,5 @@
 %global _prefix /usr/local
-Summary: None
+Summary: PostgreSQL TDE Vault integration
 Name: pgcustodian
 Version: v0.1.2
 Release: 1%{?dist}
@@ -10,7 +10,7 @@ Source0: pgcustodian_v0.1.2_linux_arm64.tar.gz
 BuildArch: aarch64
 
 %description
-None
+PostgreSQL TDE Vault integration
 
 %prep
 mkdir -p %{_sourcedir}
