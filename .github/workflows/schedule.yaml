@@ -76,7 +76,7 @@ jobs:
       - name: check on changes
         id: changed_files
         run: |
-          NUM_CHANGED_FILES=$(git diff --name-status specs | wc -l)
+          NUM_CHANGED_FILES=$(git status -s specs | wc -l)
           echo "Number of changed files: $NUM_CHANGED_FILES"
           echo "num_changed_files=$NUM_CHANGED_FILES" >> $GITHUB_OUTPUT
 
