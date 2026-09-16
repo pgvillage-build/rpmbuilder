@@ -1,26 +1,26 @@
 %global _prefix /usr/local
-Summary: PostgreSQL cloud native High Availability and more.
+Summary: PostgreSQL cloud native High Availability
 Name: stolon
-Version: v0.17.0
+Version: v0.19.7
 Release: 1%{?dist}
 License: Apache-2.0
 Group: Unspecified
-Url: https://gitHub.com/mannemsolutions/stolon
-Source0: stolon_v0.17.0_linux_arm64.tar.gz
+Url: https://gitHub.com/pgvillage-tools/stolon
+Source0: stolon_v0.19.7_linux_arm64.tar.gz
 BuildArch: aarch64
 
 %description
-PostgreSQL cloud native High Availability and more.
+PostgreSQL cloud native High Availability
 
 %prep
 mkdir -p %{_sourcedir}
-curl -L https://github.com/mannemsolutions/stolon/releases/download/v0.17.0/stolon_v0.17.0_linux_arm64.tar.gz -o %{_sourcedir}/stolon_v0.17.0_linux_arm64.tar.gz
+curl -L https://github.com/pgvillage-tools/stolon/releases/download/v0.19.7/stolon_v0.19.7_linux_arm64.tar.gz -o %{_sourcedir}/stolon_v0.19.7_linux_arm64.tar.gz
 
 
 
 %install
 mkdir -p %{buildroot}/%{_bindir}
-tar -xvf %{_sourcedir}/stolon_v0.17.0_linux_arm64.tar.gz
+tar -xvf %{_sourcedir}/stolon_v0.19.7_linux_arm64.tar.gz
 
 %{__install} -m 0755 %{_builddir}/stolonctl %{buildroot}/%{_bindir}/stolonctl
 %{__install} -m 0755 %{_builddir}/stolon-sentinel %{buildroot}/%{_bindir}/stolon-sentinel

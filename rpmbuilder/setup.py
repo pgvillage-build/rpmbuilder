@@ -46,9 +46,9 @@ setup(
                 "binaries",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://github.com/MannemSolutions/rpmbuikder",
+    url="https://github.com/pgvillage-build/rpmbuilder",
     author="Sebastiaan Mannem",
-    author_email="sebas@mannemsolutions.nl",
+    author_email="sebas@mannem.nl",
     license="GPL-3.0-or-later",
     classifiers=[
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
