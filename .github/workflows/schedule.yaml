@@ -82,7 +82,7 @@ jobs:
 
       - name: Create PR with new spec
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT_APPROVER }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           BRANCH_NAME="auto-update-$(date +%s)"
           
