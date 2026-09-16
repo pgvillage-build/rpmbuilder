@@ -6,7 +6,7 @@ Build rpm files from github repos with singleton binaries
 Are added in this repo as a gpg encrypted file.
 To extract:
 ```
-cd ~/git/mannemsooutions/rpmbuilder
+cd ~/git/pgvillage-build/rpmbuilder
 gpg -d secrets.tar.gz.gpg | tar -xv
 ```
 After that your RPM's will be signed ;)...
@@ -28,11 +28,11 @@ docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
 ## Build the rpms
 ```
-cd ~/git/mannemsooutions/rpmbuilder
+cd ~/git/pgvillage-tools/rpmbuilder
 make build_rpms
 ```
 
 ## Support
-For all rpms that are available from https://github.com/MannemSolutions/rpmbuilder/releases support can be acquired from Mannem Solutions in The Netherlands.
+For all rpms that are available from https://github.com/pgvillage-build/rpmbuilder/releases support can be acquired from Nibble-IT in The Netherlands.
 
-For more information please contact us at www.mannemsolutions.nl/contact
+For more information please contact us at https://www.nibble-it.nl/contact

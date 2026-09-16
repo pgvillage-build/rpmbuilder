@@ -1,20 +1,20 @@
 %global _prefix /usr/local
-Summary: PostgreSQL TDE Vault integration
+Summary: None
 Name: pgcustodian
 Version: v0.1.2
 Release: 1%{?dist}
 License: GPL-3.0
 Group: Unspecified
-Url: https://gitHub.com/mannemsolutions/pgcustodian
+Url: https://gitHub.com/pgvillage-tools/pgcustodian
 Source0: pgcustodian_v0.1.2_linux_arm64.tar.gz
 BuildArch: aarch64
 
 %description
-PostgreSQL TDE Vault integration
+None
 
 %prep
 mkdir -p %{_sourcedir}
-curl -L https://github.com/mannemsolutions/pgcustodian/releases/download/v0.1.2/pgcustodian_v0.1.2_linux_arm64.tar.gz -o %{_sourcedir}/pgcustodian_v0.1.2_linux_arm64.tar.gz
+curl -L https://github.com/pgvillage-tools/pgcustodian/releases/download/v0.1.2/pgcustodian_v0.1.2_linux_arm64.tar.gz -o %{_sourcedir}/pgcustodian_v0.1.2_linux_arm64.tar.gz
 
 
 

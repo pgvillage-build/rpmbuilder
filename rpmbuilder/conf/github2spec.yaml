@@ -2,35 +2,35 @@ template: /usr/rpmbuilder/templates/spec.j2
 #dest: /host/specs/
 repositories:
   pgfga:
-    organization: mannemsolutions
+    organization: pgvillage-build
     asset_filter: '{{ repository }}_{{ version }}_linux_{{ binary_arch }}.tar.gz$'
     files:
       - src: '{{ repository }}'
         dest: '%{_bindir}/{{ repository }}'
         mode: '0755'
   pgav:
-    organization: mannemsolutions
+    organization: pgvillage-build
     asset_filter: '{{ repository }}_{{ version }}_Linux-{{ package_arch }}.tar.gz$'
     files:
       - src: '{{ repository }}'
         dest: '%{_bindir}/{{ repository }}'
         mode: '0755'
   pgroute66:
-    organization: mannemsolutions
+    organization: pgvillage-build
     asset_filter: '{{ repository }}_{{ version }}_linux_{{ binary_arch }}.tar.gz$'
     files:
       - src: '{{ repository }}'
         dest: '%{_bindir}/{{ repository }}'
         mode: '0755'
   pgquartz:
-    organization: mannemsolutions
+    organization: pgvillage-build
     asset_filter: '{{ repository }}_{{ version }}_linux_{{ binary_arch }}.tar.gz$'
     files:
       - src: '{{ repository }}'
         dest: '%{_bindir}/{{ repository }}'
         mode: '0755'
   stolon:
-    organization: mannemsolutions
+    organization: pgvillage-build
     asset_filter: '{{ repository }}_{{ version }}_linux_{{ binary_arch }}.tar.gz$'
     files:
       - src: 'stolonctl'

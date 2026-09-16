@@ -1,26 +1,26 @@
 %global _prefix /usr/local
-Summary: Tool to manage PostgreSQL Fine Grained Access
+Summary: None
 Name: pgfga
-Version: v2.0.2
+Version: v2.12.1
 Release: 1%{?dist}
 License: Apache-2.0
 Group: Unspecified
-Url: https://gitHub.com/mannemsolutions/pgfga
-Source0: pgfga_v2.0.2_linux_arm64.tar.gz
+Url: https://gitHub.com/pgvillage-tools/pgfga
+Source0: pgfga_v2.12.1_linux_arm64.tar.gz
 BuildArch: aarch64
 
 %description
-Tool to manage PostgreSQL Fine Grained Access
+None
 
 %prep
 mkdir -p %{_sourcedir}
-curl -L https://github.com/mannemsolutions/pgfga/releases/download/v2.0.2/pgfga_v2.0.2_linux_arm64.tar.gz -o %{_sourcedir}/pgfga_v2.0.2_linux_arm64.tar.gz
+curl -L https://github.com/pgvillage-tools/pgfga/releases/download/v2.12.1/pgfga_v2.12.1_linux_arm64.tar.gz -o %{_sourcedir}/pgfga_v2.12.1_linux_arm64.tar.gz
 
 
 
 %install
 mkdir -p %{buildroot}/%{_bindir}
-tar -xvf %{_sourcedir}/pgfga_v2.0.2_linux_arm64.tar.gz
+tar -xvf %{_sourcedir}/pgfga_v2.12.1_linux_arm64.tar.gz
 
 %{__install} -m 0755 %{_builddir}/pgfga %{buildroot}/%{_bindir}/pgfga
 
