@@ -5,7 +5,7 @@ Version: v0.1.2
 Release: 1%{?dist}
 License: GPL-3.0
 Group: Unspecified
-Url: https://gitHub.com/mannemsolutions/pgav
+Url: https://gitHub.com/pgvillage-tools/pgav
 Source0: pgav_v0.1.2_Linux-aarch64.tar.gz
 BuildArch: aarch64
 
@@ -14,7 +14,7 @@ Tool to track postgres availability
 
 %prep
 mkdir -p %{_sourcedir}
-curl -L https://github.com/mannemsolutions/pgav/releases/download/v0.1.2/pgav_v0.1.2_Linux-aarch64.tar.gz -o %{_sourcedir}/pgav_v0.1.2_Linux-aarch64.tar.gz
+curl -L https://github.com/pgvillage-tools/pgav/releases/download/v0.1.2/pgav_v0.1.2_Linux-aarch64.tar.gz -o %{_sourcedir}/pgav_v0.1.2_Linux-aarch64.tar.gz
 
 
 
