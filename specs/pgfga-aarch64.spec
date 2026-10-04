@@ -1,12 +1,12 @@
 %global _prefix /usr/local
 Summary: None
 Name: pgfga
-Version: v2.13.0
+Version: v2.14.0
 Release: 1%{?dist}
 License: Apache-2.0
 Group: Unspecified
 Url: https://gitHub.com/pgvillage-tools/pgfga
-Source0: pgfga_v2.13.0_linux_arm64.tar.gz
+Source0: pgfga_v2.14.0_linux_arm64.tar.gz
 BuildArch: aarch64
 
 %description
@@ -14,13 +14,13 @@ None
 
 %prep
 mkdir -p %{_sourcedir}
-curl -L https://github.com/pgvillage-tools/pgfga/releases/download/v2.13.0/pgfga_v2.13.0_linux_arm64.tar.gz -o %{_sourcedir}/pgfga_v2.13.0_linux_arm64.tar.gz
+curl -L https://github.com/pgvillage-tools/pgfga/releases/download/v2.14.0/pgfga_v2.14.0_linux_arm64.tar.gz -o %{_sourcedir}/pgfga_v2.14.0_linux_arm64.tar.gz
 
 
 
 %install
 mkdir -p %{buildroot}/%{_bindir}
-tar -xvf %{_sourcedir}/pgfga_v2.13.0_linux_arm64.tar.gz
+tar -xvf %{_sourcedir}/pgfga_v2.14.0_linux_arm64.tar.gz
 
 %{__install} -m 0755 %{_builddir}/pgfga %{buildroot}/%{_bindir}/pgfga
 
