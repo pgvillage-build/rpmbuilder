@@ -1,14 +1,13 @@
 services:
   specgen:
-    build:
-      context: .
-      dockerfile: Dockerfile.specgen
-    command:
-      - /host/scripts/generate_specs.sh
+    image: ghcr.io/pgvillage-tools/specbuilder:${SPECBUILDER_VERSION:-latest}
+    # specs in a git checkout belong to the host user, so run as root to be able to overwrite them
+    user: root
     volumes:
       - ./:/host
     environment:
       GITHUB2SPEC_CONFIG: /host/config/github2spec.yaml
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
   rpmbuilder:
     image: ${IMAGETAG}
     command:

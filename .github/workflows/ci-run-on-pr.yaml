@@ -118,6 +118,7 @@ jobs:
         run: |
           docker-compose up specgen --exit-code-from specgen
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCKER_DEFAULT_PLATFORM: linux/${{ matrix.arch }}
           DOCKER_BUILDKIT: 1
 
@@ -148,8 +149,8 @@ jobs:
 
       - id: matrix
         run: |
-          python scripts/minimal_speclist_as_json.py
-          python scripts/minimal_speclist_as_json.py >> $GITHUB_OUTPUT
+          scripts/speclist_as_json.sh --minimal
+          scripts/speclist_as_json.sh --minimal >> $GITHUB_OUTPUT
 
   build-rpms:
     strategy:
