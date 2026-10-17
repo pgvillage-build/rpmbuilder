@@ -118,6 +118,7 @@ jobs:
         run: |
           docker-compose up specgen --exit-code-from specgen
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCKER_DEFAULT_PLATFORM: linux/${{ matrix.arch }}
           DOCKER_BUILDKIT: 1
 

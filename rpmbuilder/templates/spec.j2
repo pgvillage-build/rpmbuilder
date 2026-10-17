@@ -1,5 +1,5 @@
 %global _prefix /usr/local
-Summary: {{ description }}
+Summary: {{ description or package_name }}
 Name: {{ package_name }}
 Version: {{ version }}
 Release: 1%{?dist}
@@ -11,7 +11,7 @@ Url: {{ url }}
 {% for require in requires %}Requires: {{ require }}
 {% endfor %}
 %description
-{{ description }}
+{{ description or package_name }}
 
 %prep
 mkdir -p %{_sourcedir}

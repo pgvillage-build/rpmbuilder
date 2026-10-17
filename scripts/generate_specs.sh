@@ -6,7 +6,7 @@ export GITHUB2SPEC_DEST=${GITHUB2SPEC_DEST:-${DEST}/specs}
 
 mkdir -p "${GITHUB2SPEC_DEST}"
 
-github2spec
+specbuilder
 
 find /host/specs
 
