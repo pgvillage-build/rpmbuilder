@@ -1,29 +1,28 @@
 #!/bin/bash
-echo -n "myspecs="
-{
-	echo "{"
-	echo "\"arch\":[\"arm64\",\"amd64\"],"
-	echo "\"baseimage\":["
-	i=0
-	for img in rockylinux:{8,9} fedora:{39..42}; do
-		i+=1
-		if [ "$i" -gt "1" ]; then
-			echo -n ","
-			echo
-		fi
-		echo -n "\"${img}\""
+# Print a GitHub Actions matrix (as `mymatrix=<json>`) that builds every spec in ./specs on every base image
+# for its architecture.
+#
+# Usage: speclist_as_json.sh [--minimal]
+#   --minimal  build on one base image per architecture only (used for pull requests)
+set -e
+
+if [ "$1" = "--minimal" ]; then
+	AMD64_IMAGES=(fedora:42)
+	ARM64_IMAGES=(rockylinux:9)
+else
+	AMD64_IMAGES=(fedora:{39..42} rockylinux:{8..9})
+	ARM64_IMAGES=("${AMD64_IMAGES[@]}")
+fi
+
+for SPEC in specs/*; do
+	[ -f "${SPEC}" ] || continue
+	case "${SPEC}" in
+		*x86_64*) ARCH=amd64; IMAGES=("${AMD64_IMAGES[@]}") ;;
+		*aarch64*) ARCH=arm64; IMAGES=("${ARM64_IMAGES[@]}") ;;
+		*) continue ;;
+	esac
+	for IMAGE in "${IMAGES[@]}"; do
+		jq -nc --arg arch "${ARCH}" --arg baseimage "${IMAGE%%:*}" --arg version "${IMAGE#*:}" \
+			--arg spec "$(basename "${SPEC}")" '{arch: $arch, baseimage: $baseimage, version: $version, spec: $spec}'
 	done
-	echo "],"
-	echo "\"spec\":["
-	i=0
-	for spec in specs/*; do
-		i+=1
-		if [ "$i" -gt "1" ]; then
-			echo -n ","
-			echo
-		fi
-		echo -n "\"${spec}\""
-	done
-	echo
-	echo "]}"
-} | jq -c
+done | jq -rsc '"mymatrix=" + ({include: .} | tojson)'
