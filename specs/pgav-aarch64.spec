@@ -5,7 +5,7 @@ Version: v0.1.2
 Release: 1%{?dist}
 License: GPL-3.0
 Group: Unspecified
-Url: https://gitHub.com/pgvillage-tools/pgav
+Url: https://github.com/pgvillage-tools/pgav
 Source0: pgav_v0.1.2_Linux-aarch64.tar.gz
 BuildArch: aarch64
 

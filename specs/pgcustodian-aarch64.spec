@@ -5,7 +5,7 @@ Version: v0.1.2
 Release: 1%{?dist}
 License: GPL-3.0
 Group: Unspecified
-Url: https://gitHub.com/pgvillage-tools/pgcustodian
+Url: https://github.com/pgvillage-tools/pgcustodian
 Source0: pgcustodian_v0.1.2_linux_arm64.tar.gz
 BuildArch: aarch64
 

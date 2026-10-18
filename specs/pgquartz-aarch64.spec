@@ -5,7 +5,7 @@ Version: v0.6.8
 Release: 1%{?dist}
 License: GPL-3.0
 Group: Unspecified
-Url: https://gitHub.com/pgvillage-tools/pgquartz
+Url: https://github.com/pgvillage-tools/pgquartz
 Source0: pgquartz_v0.6.8_linux_arm64.tar.gz
 BuildArch: aarch64
 
