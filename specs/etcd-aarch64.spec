@@ -5,7 +5,7 @@ Version: v3.7.2
 Release: 1%{?dist}
 License: Apache-2.0
 Group: Unspecified
-Url: https://gitHub.com/etcd-io/etcd
+Url: https://github.com/etcd-io/etcd
 Source0: etcd-v3.7.2-linux-arm64.tar.gz
 BuildArch: aarch64
 

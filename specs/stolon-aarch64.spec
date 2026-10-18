@@ -5,7 +5,7 @@ Version: v0.19.7
 Release: 1%{?dist}
 License: Apache-2.0
 Group: Unspecified
-Url: https://gitHub.com/pgvillage-tools/stolon
+Url: https://github.com/pgvillage-tools/stolon
 Source0: stolon_v0.19.7_linux_arm64.tar.gz
 BuildArch: aarch64
 
