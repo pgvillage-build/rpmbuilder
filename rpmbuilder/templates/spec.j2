@@ -22,7 +22,7 @@ mkdir -p %{_sourcedir}
 
 %install
 mkdir -p %{buildroot}/%{_bindir}
-{% for asset in assets %}tar -xvf %{_sourcedir}/{{ asset.name }}
+{% for asset in assets %}{{ extract | default('tar -xvf') }} %{_sourcedir}/{{ asset.name }}
 {% endfor %}
 {% for file in files %}%{__install} -m {{ file.mode | default('0755') }} %{_builddir}/{{file.src}} %{buildroot}/{{file.dest}}
 {% endfor %}
