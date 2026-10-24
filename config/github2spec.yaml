@@ -92,3 +92,10 @@ repositories:
       - src: 'rc'
         dest: '%{_bindir}/rc'
         mode: '0755'
+  pg_tps_optimizer:
+    organization: pgvillage-tools
+    asset_filter: "{{ repository }}-{{ version | replace('v', '') }}-{{ package_arch }}-unknown-linux-musl.tar.gz$"
+    files:
+      - src: "{{ repository }}-{{ version | replace('v', '') }}-{{ package_arch }}-unknown-linux-musl/{{ repository }}"
+        dest: '%{_bindir}/{{ repository }}'
+        mode: '0755'
