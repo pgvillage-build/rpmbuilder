@@ -125,3 +125,11 @@ repositories:
       - src: "{{ repository }}-{{ version | replace('v', '') }}-{{ package_arch }}-unknown-linux-musl/{{ repository }}"
         dest: '%{_bindir}/{{ repository }}'
         mode: '0755'
+  wal-g-pg:
+    organization: pgvillage-build
+    repository: wal-g-builder
+    # wal-g-builder releases an rpm per distro: the script only downloads the one for the distro it runs on
+    template: /host/rpmbuilder/templates/fetch-rpm.sh.j2
+    # renovate: datasource=github-releases depName=pgvillage-build/wal-g-builder versioning=loose
+    target_release: tags/v3.0.9b
+    asset_filter: '^{{ package_name }}-.*\.{{ package_arch }}\.rpm$'
