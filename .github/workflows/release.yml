@@ -51,13 +51,10 @@ jobs:
     env:
       IMAGEARTIFACT: builder-${{ matrix.baseimage }}-${{ matrix.version }}-${{ matrix.arch }}
       IMAGETAG: builder-${{ matrix.baseimage }}:${{ matrix.version }}
-    runs-on: ubuntu-latest
+    # run on a runner of the target arch (native arm64 runners are free for public repos), no QEMU
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v7
-
-      # https://github.com/docker/setup-qemu-action
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
 
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
@@ -88,13 +85,10 @@ jobs:
           - amd64
     env:
       IMAGETAG: builder-${{ matrix.baseimage }}:${{ matrix.version }}
-    runs-on: ubuntu-latest
+    # run on a runner of the target arch (native arm64 runners are free for public repos), no QEMU
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v7
-
-      # https://github.com/docker/setup-qemu-action
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
 
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
@@ -104,7 +98,7 @@ jobs:
       - name: update to docker-compose v2
         run: |
           sudo apt-get install -y curl
-          sudo curl -SL https://github.com/docker/compose/releases/download/v2.34.0/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+          sudo curl -SL https://github.com/docker/compose/releases/download/v2.34.0/docker-compose-linux-$(uname -m) -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
 
@@ -155,7 +149,8 @@ jobs:
     strategy:
       matrix: ${{ fromJson(needs.build_matrix.outputs.mymatrix) }}
 
-    runs-on: ubuntu-latest
+    # run on a runner of the target arch (native arm64 runners are free for public repos), no QEMU
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     needs:
       - builder_images
       - build_matrix
@@ -175,10 +170,6 @@ jobs:
           rm -rf specs && mkdir specs
           cp all/${{ matrix.spec }} specs/
 
-      # https://github.com/docker/setup-qemu-action
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
-
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
         id: buildx
@@ -187,7 +178,7 @@ jobs:
       - name: update to docker-compose v2
         run: |
           sudo apt-get install -y curl
-          sudo curl -SL https://github.com/docker/compose/releases/download/v2.34.0/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+          sudo curl -SL https://github.com/docker/compose/releases/download/v2.34.0/docker-compose-linux-$(uname -m) -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
 
