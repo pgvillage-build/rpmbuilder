@@ -16,12 +16,6 @@ services:
       - /host/scripts/build_rpms.sh
     volumes:
       - ./:/host
-  rpmdownloader:
-    image: ${IMAGETAG}
-    command:
-      - /host/scripts/download_rpms.sh
-    volumes:
-      - ./:/host
   rpmsigner:
     image: ${IMAGETAG}
     command:
