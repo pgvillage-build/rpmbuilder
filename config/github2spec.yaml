@@ -119,7 +119,7 @@ repositories:
   pg_tps_optimizer:
     organization: pgvillage-tools
     # renovate: datasource=github-releases depName=pgvillage-tools/pg_tps_optimizer
-    target_release: tags/v0.3.0
+    target_release: tags/v1.0.1
     asset_filter: "{{ repository }}-{{ version | replace('v', '') }}-{{ package_arch }}-unknown-linux-musl.tar.gz$"
     files:
       - src: "{{ repository }}-{{ version | replace('v', '') }}-{{ package_arch }}-unknown-linux-musl/{{ repository }}"
