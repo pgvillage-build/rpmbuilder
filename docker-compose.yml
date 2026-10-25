@@ -8,6 +8,8 @@ services:
     environment:
       GITHUB2SPEC_CONFIG: /host/config/github2spec.yaml
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      # only generate these packages (all of them when empty)
+      SPECBUILDER_ONLY: ${SPECBUILDER_ONLY:-}
   rpmbuilder:
     image: ${IMAGETAG}
     command:
