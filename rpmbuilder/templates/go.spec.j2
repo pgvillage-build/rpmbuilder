@@ -1,0 +1,58 @@
+# Build {{ package_name }} {{ version }} from source with go.
+#
+# Generated from a Jinja2 template; do not edit the rendered spec by hand.
+#
+# The prep section downloads go {{ go_version }} and clones the tag, so it needs network access. The build
+# dependencies are not BuildRequires: they are baked into the builder image (docker/rpmtools/Dockerfile),
+# which runs rpmbuild as a non-root user.
+%global _prefix /usr/local
+# go strips its own binaries and adds no GNU build id
+%global debug_package %{nil}
+%global _missing_build_ids_terminate_build 0
+# keep distro hardening/LTO flags (Fedora sets them automatically) away from cgo and the static deps
+%undefine _auto_set_build_flags
+%global go_version {{ go_version }}
+# the git tag to build (target_release is a tag, optionally with a tags/ prefix)
+%global git_tag {{ target_release | replace('tags/', '') }}
+
+Summary: {{ description or package_name }}
+Name: {{ package_name }}
+# strip the tag's leading "v"
+Version: %(v="{{ version }}"; echo "${v#v}")
+Release: {{ revision | default('1') }}%{?dist}
+License: {{ license | default('Apache-2.0') }}
+Group: {{ group | default('Unspecified') }}
+Url: {{ url }}
+BuildArch: {{ package_arch | default('x86_64') }}
+{% for require in requires %}Requires: {{ require }}
+{% endfor %}
+%description
+{{ long_description or description or package_name }}
+
+%prep
+rm -rf %{_builddir}/%{name}
+mkdir -p %{_builddir}/%{name}
+cd %{_builddir}/%{name}
+echo "Downloading go %{go_version}"
+curl -fsSL --retry 3 "https://go.dev/dl/go%{go_version}.linux-{{ binary_arch }}.tar.gz" | tar -xz
+echo "Cloning {{ url }} %{git_tag}"
+git clone -q --depth 1 --branch "%{git_tag}" "{{ url }}.git" src
+
+%build
+cd %{_builddir}/%{name}
+export PATH="${PWD}/go/bin:${PATH}"
+export GOPATH="${PWD}/gopath"
+export GOCACHE="${PWD}/gocache"
+# keep the module cache writable, so rpmbuild can clean it up
+export GOFLAGS=-modcacherw
+cd src
+TAG="%{git_tag}"
+GITREV="$(git rev-parse HEAD)"
+{% for cmd in build %}{{ cmd | replace('%', '%%') }}
+{% endfor %}
+%install
+{% for file in files %}install -D -m {{ file.mode | default('0755') }} %{_builddir}/%{name}/src/{{ file.src }} %{buildroot}{{ file.dest }}
+{% endfor %}
+%files
+{% for file in files %}{{ file.dest }}
+{% endfor %}

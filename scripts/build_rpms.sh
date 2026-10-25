@@ -15,12 +15,7 @@ cd "${GITHUB2SPEC_DEST}"
 #  rpmbuild -ba "${SPEC}"
 #done
 find "${GITHUB2SPEC_DEST}/" -name '*.spec' | while read -r SPEC; do
-	# rendered from rpmbuilder/templates/fetch-rpm.sh.j2: a script that downloads a prebuilt rpm into RPMDEST
-	if [ "$(head -c2 "${SPEC}")" = '#!' ]; then
-		bash "${SPEC}"
-	else
-		rpmbuild -ba "${SPEC}"
-	fi
+	rpmbuild -ba "${SPEC}"
 done
 
 for RPM in ~/rpmbuild/RPMS/*/*.rpm; do
