@@ -1,3 +1,3 @@
 %_signature gpg
 %_gpg_name Package Manager
-%_gpg_sign_cmd_extra_args --batch --pinentry-mode loopback --passphrase 'PASSPHRASE'
+%_gpg_sign_cmd_extra_args --batch --pinentry-mode loopback
