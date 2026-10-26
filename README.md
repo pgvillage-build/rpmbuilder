@@ -51,6 +51,19 @@ The GitHub workflows do the building:
 
 The builder image is `docker/rpmtools/Dockerfile`; `scripts/speclist_as_json.sh` decides what is built where.
 
+## Build locally
+
+The Makefile does the same with docker-compose, for one distribution release and the architecture of your machine:
+
+```
+make specs                                  # generate specs/ from config/github2spec.yaml
+make rpms IMAGE=rockylinux/rockylinux:10    # build the builder image and the rpms in rpms/ (default fedora:44)
+make sign                                   # sign rpms/ (needs GPG_KEY_B64 and GPG_PASSPHRASE, see Secrets)
+```
+
+`SPECBUILDER_ONLY=pgfga make specs` only generates the given packages. With podman, add
+`DOCKER=podman COMPOSE=podman-compose`.
+
 ## Secrets
 Are added in this repo as a gpg encrypted file.
 To extract:
