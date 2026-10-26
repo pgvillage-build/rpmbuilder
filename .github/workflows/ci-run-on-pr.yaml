@@ -250,12 +250,39 @@ jobs:
          GPG_PASSPHRASE: "${{ secrets.GPG_PASSPHRASE }}"
          GPG_KEY_B64: "${{ secrets.GPG_KEY_B64 }}"
 
-      - name: Add rpm's to release
-        uses: softprops/action-gh-release@v3
-        if: startsWith(github.ref, 'refs/tags/')
+      # the package job merges these into one tarball per distro release
+      - name: sort rpm's by distro and arch
+        run: |
+          mkdir -p "out/${{ matrix.distro }}/${{ matrix.arch == 'arm64' && 'aarch64' || 'x86_64' }}"
+          cp rpms/*.rpm "out/${{ matrix.distro }}/${{ matrix.arch == 'arm64' && 'aarch64' || 'x86_64' }}/"
+
+      - uses: actions/upload-artifact@v7
         with:
-          files: |
-            rpms/*
+          name: rpms-${{ matrix.distro }}-${{ matrix.arch }}-${{ matrix.spec }}
+          path: out/
+          if-no-files-found: error
+
+  # same as the release workflow, but keeps the tarballs as a workflow artifact
+  package:
+    needs:
+      - build-rpms
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: rpms-*
+          path: out/
+          merge-multiple: true
+
+      - name: create one tarball per distro release
+        run: scripts/package_rpms.sh out "pr${{ github.event.number }}" dist
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: tarballs
+          path: dist/
 
   # Jobs are skipped when nothing needs building, or when a job they need failed: so check all of them.
   check-build-rpms-status:
@@ -266,6 +293,7 @@ jobs:
       - build_specs
       - build_matrix
       - build-rpms
+      - package
     if: always()
     steps:
       - name: Evaluate build-rpm status
