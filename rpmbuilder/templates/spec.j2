@@ -10,6 +10,7 @@ Url: {{ url }}
 {% for asset in assets %}Source{{ loop.index0 }}: {{ asset.name }}
 {% endfor %}BuildArch: {{ package_arch | default('x86_64') }}
 {% for require in requires %}Requires: {{ require }}
+{% endfor %}{% for provide in provides %}Provides: {{ provide }}
 {% endfor %}
 %description
 {{ description or package_name }}
