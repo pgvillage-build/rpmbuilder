@@ -7,10 +7,10 @@
 set -e
 
 if [ "$1" = "--minimal" ]; then
-	AMD64_IMAGES=(fedora:42)
-	ARM64_IMAGES=(rockylinux:9)
+	AMD64_IMAGES=(fedora:44)
+	ARM64_IMAGES=(rockylinux:10)
 else
-	AMD64_IMAGES=(fedora:{39..42} rockylinux:{8..9})
+	AMD64_IMAGES=(fedora:{43..44} rockylinux:{8..10})
 	ARM64_IMAGES=("${AMD64_IMAGES[@]}")
 fi
 

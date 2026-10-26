@@ -44,42 +44,14 @@ jobs:
     strategy:
       matrix:
         include:
-          #- baseimage: rockylinux
-          #  version: "9"
-          #  arch: amd64
-          #- baseimage: rockylinux
-          #  version: "9"
-          #  arch: amd64
-          #- baseimage: fedora
-          #  version: "39"
-          #  arch: amd64
-          #- baseimage: fedora
-          #  version: "40"
-          #  arch: amd64
-          #- baseimage: fedora
-          #  version: "41"
-          #  arch: amd64
           - baseimage: fedora
-            version: "42"
+            version: "44"
+            image: fedora:44
             arch: amd64
-          #- baseimage: rockylinux
-          #  version: "8"
-          #  arch: arm64
           - baseimage: rockylinux
-            version: "9"
+            version: "10"
+            image: rockylinux/rockylinux:10
             arch: arm64
-          #- baseimage: fedora
-          #  version: "39"
-          #  arch: arm64
-          #- baseimage: fedora
-          #  version: "40"
-          #  arch: arm64
-          #- baseimage: fedora
-          #  version: "41"
-          #  arch: arm64
-          #- baseimage: fedora
-          #  version: "42"
-          #  arch: arm64
     env:
       IMAGEARTIFACT: builder-${{ matrix.baseimage }}-${{ matrix.version }}-${{ matrix.arch }}
       IMAGETAG: builder-${{ matrix.baseimage }}:${{ matrix.version }}
@@ -99,7 +71,7 @@ jobs:
           context: docker/rpmtools
           platforms: 'linux/${{ matrix.arch }}'
           build-args: |
-            BASEIMAGE=${{ matrix.baseimage }}:${{ matrix.version }}
+            BASEIMAGE=${{ matrix.image }}
           tags: ${{ env.IMAGETAG }}
           outputs: type=docker,dest=${{ runner.temp }}/myimage.tar
 
