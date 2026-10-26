@@ -1,7 +1,8 @@
 %global _prefix /usr/local
 Summary: {{ description or package_name }}
 Name: {{ package_name }}
-Version: {{ version }}
+# strip the tag's leading "v"
+Version: %(v="{{ version }}"; echo "${v#v}")
 Release: 1%{?dist}
 License: {{ license }}
 Group: {{ group | default('Unspecified') }}
