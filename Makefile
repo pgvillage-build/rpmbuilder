@@ -14,7 +14,7 @@ specs:
 	mkdir -p specs
 	chmod 777 specs
 	$(COMPOSE) pull specgen
-	$(COMPOSE) up specgen --exit-code-from specgen
+	$(COMPOSE) run --rm specgen
 
 .PHONY: image
 image:
