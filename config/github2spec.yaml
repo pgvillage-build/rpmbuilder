@@ -112,6 +112,9 @@ repositories:
     # renovate: datasource=github-releases depName=rustfs/cli
     target_release: tags/v0.1.36
     asset_filter: '{{ package_name }}-linux-{{ binary_arch }}-{{ version }}.tar.gz$'
+    # the binary is called rc, so `dnf install rc` installs this package too
+    provides:
+      - rc
     files:
       - src: 'rc'
         dest: '%{_bindir}/rc'
