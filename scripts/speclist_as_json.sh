@@ -3,14 +3,14 @@
 # for its architecture.
 #
 # Usage: speclist_as_json.sh [--minimal]
-#   --minimal  build on one base image per architecture only (used for pull requests)
+#   --minimal  build on a few base images only (used for pull requests)
 set -e
 
 if [ "$1" = "--minimal" ]; then
-	AMD64_IMAGES=(fedora:44)
+	AMD64_IMAGES=(fedora:44 opensuse-leap:16.0)
 	ARM64_IMAGES=(rockylinux:10)
 else
-	AMD64_IMAGES=(fedora:{43..44} rockylinux:{8..10})
+	AMD64_IMAGES=(fedora:{43..44} rockylinux:{8..10} opensuse-leap:16.0)
 	ARM64_IMAGES=("${AMD64_IMAGES[@]}")
 fi
 
@@ -26,6 +26,7 @@ for SPEC in specs/*; do
 		case "${IMAGE%%:*}" in
 			rockylinux) DISTRO="el${IMAGE#*:}" ;;
 			fedora) DISTRO="fc${IMAGE#*:}" ;;
+			opensuse-leap) DISTRO="lp${IMAGE#*:}"; DISTRO="${DISTRO//./}" ;;
 			*) echo "no distro name for ${IMAGE}" >&2; exit 1 ;;
 		esac
 		jq -nc --arg arch "${ARCH}" --arg baseimage "${IMAGE%%:*}" --arg version "${IMAGE#*:}" \

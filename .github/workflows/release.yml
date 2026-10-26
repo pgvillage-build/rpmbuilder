@@ -32,6 +32,10 @@ jobs:
             version: "44"
             image: fedora:44
             arch: amd64
+          - baseimage: opensuse-leap
+            version: "16.0"
+            image: opensuse/leap:16.0
+            arch: amd64
           - baseimage: rockylinux
             version: "8"
             image: rockylinux/rockylinux:8
@@ -51,6 +55,10 @@ jobs:
           - baseimage: fedora
             version: "44"
             image: fedora:44
+            arch: arm64
+          - baseimage: opensuse-leap
+            version: "16.0"
+            image: opensuse/leap:16.0
             arch: arm64
     env:
       IMAGEARTIFACT: builder-${{ matrix.baseimage }}-${{ matrix.version }}-${{ matrix.arch }}
