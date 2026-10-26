@@ -159,6 +159,8 @@ jobs:
 
   build_rpms:
     strategy:
+      # one failing distro or package should not cancel the builds for the others
+      fail-fast: false
       matrix: ${{ fromJson(needs.build_matrix.outputs.mymatrix) }}
 
     # run on a runner of the target arch (native arm64 runners are free for public repos), no QEMU
