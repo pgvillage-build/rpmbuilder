@@ -40,22 +40,27 @@ jobs:
             echo "generate=${GENERATE}"
           } >> "$GITHUB_OUTPUT"
 
+  # the newest release of every distro (from endoflife.date) that has a container image, see scripts/distro_releases.sh
+  distros:
+    runs-on: ubuntu-latest
+    outputs:
+      builders: ${{ steps.distros.outputs.builders }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: find the distro releases to build for
+        id: distros
+        run: |
+          BUILDERS=$(scripts/distro_releases.sh --minimal)
+          echo "Building on ${BUILDERS}"
+          echo "builders=${BUILDERS}" >> "$GITHUB_OUTPUT"
+
   builder_images:
+    needs:
+      - distros
     strategy:
       matrix:
-        include:
-          - baseimage: fedora
-            version: "44"
-            image: fedora:44
-            arch: amd64
-          - baseimage: opensuse-leap
-            version: "16.0"
-            image: opensuse/leap:16.0
-            arch: amd64
-          - baseimage: rockylinux
-            version: "10"
-            image: rockylinux/rockylinux:10
-            arch: arm64
+        include: ${{ fromJSON(needs.distros.outputs.builders) }}
     env:
       IMAGEARTIFACT: builder-${{ matrix.baseimage }}-${{ matrix.version }}-${{ matrix.arch }}
       IMAGETAG: builder-${{ matrix.baseimage }}:${{ matrix.version }}
@@ -135,6 +140,7 @@ jobs:
 
   build_matrix:
     needs:
+      - distros
       - build_specs
     outputs:
       mymatrix: ${{ steps.matrix.outputs.mymatrix }}
@@ -155,8 +161,10 @@ jobs:
 
       - id: matrix
         run: |
-          scripts/speclist_as_json.sh --minimal
-          scripts/speclist_as_json.sh --minimal >> $GITHUB_OUTPUT
+          scripts/speclist_as_json.sh
+          scripts/speclist_as_json.sh >> $GITHUB_OUTPUT
+        env:
+          BUILDERS: ${{ needs.distros.outputs.builders }}
 
   build-rpms:
     strategy:
@@ -267,6 +275,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - changes
+      - distros
       - builder_images
       - build_specs
       - build_matrix

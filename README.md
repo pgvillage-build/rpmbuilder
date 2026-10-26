@@ -12,6 +12,10 @@ Every release has rpms for x86_64 and aarch64 on:
 | Fedora             | 43, 44      | `fc43`, `fc44`      |
 | openSUSE Leap      | 16.0        | `lp160`             |
 
+The releases are not hardcoded: a release builds for every release of these distributions that
+[endoflife.date](https://endoflife.date) lists as released and not end of life, once its container image exists
+(`scripts/distro_releases.sh`). The table shows the releases at the time of writing.
+
 ## Install
 
 Each [release](https://github.com/pgvillage-build/rpmbuilder/releases) has one tarball per distribution release,
