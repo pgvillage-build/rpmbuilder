@@ -11,13 +11,14 @@ services:
       # only generate these packages (all of them when empty)
       SPECBUILDER_ONLY: ${SPECBUILDER_ONLY:-}
   rpmbuilder:
-    image: ${IMAGETAG}
+    # the builder image (docker/rpmtools); a default, so compose can load this file when only running specgen
+    image: ${IMAGETAG:-localhost/rpmbuilder:local}
     command:
       - /host/scripts/build_rpms.sh
     volumes:
       - ./:/host
   rpmsigner:
-    image: ${IMAGETAG}
+    image: ${IMAGETAG:-localhost/rpmbuilder:local}
     command:
       - /host/scripts/sign_rpms.sh
     volumes:
