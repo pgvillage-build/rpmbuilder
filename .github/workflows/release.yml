@@ -212,9 +212,37 @@ jobs:
          GPG_PASSPHRASE: "${{ secrets.GPG_PASSPHRASE }}"
          GPG_KEY_B64: "${{ secrets.GPG_KEY_B64 }}"
 
-      - name: Add rpm's to release
+      # the package job merges these into one tarball per distro release
+      - name: sort rpm's by distro and arch
+        run: |
+          mkdir -p "out/${{ matrix.distro }}/${{ matrix.arch == 'arm64' && 'aarch64' || 'x86_64' }}"
+          cp rpms/*.rpm "out/${{ matrix.distro }}/${{ matrix.arch == 'arm64' && 'aarch64' || 'x86_64' }}/"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: rpms-${{ matrix.distro }}-${{ matrix.arch }}-${{ matrix.spec }}
+          path: out/
+          if-no-files-found: error
+
+  package:
+    needs:
+      - build_rpms
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: rpms-*
+          path: out/
+          merge-multiple: true
+
+      - name: create one tarball per distro release
+        run: scripts/package_rpms.sh out "${{ github.ref_name }}" dist
+
+      - name: Add tarballs to release
         uses: softprops/action-gh-release@v3
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            rpms/*
+            dist/*

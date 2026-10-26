@@ -22,7 +22,14 @@ for SPEC in specs/*; do
 		*) continue ;;
 	esac
 	for IMAGE in "${IMAGES[@]}"; do
+		# short name of the distro release (as in %{dist}), used to name artifacts and release tarballs
+		case "${IMAGE%%:*}" in
+			rockylinux) DISTRO="el${IMAGE#*:}" ;;
+			fedora) DISTRO="fc${IMAGE#*:}" ;;
+			*) echo "no distro name for ${IMAGE}" >&2; exit 1 ;;
+		esac
 		jq -nc --arg arch "${ARCH}" --arg baseimage "${IMAGE%%:*}" --arg version "${IMAGE#*:}" \
-			--arg spec "$(basename "${SPEC}")" '{arch: $arch, baseimage: $baseimage, version: $version, spec: $spec}'
+			--arg distro "${DISTRO}" --arg spec "$(basename "${SPEC}")" \
+			'{arch: $arch, baseimage: $baseimage, version: $version, distro: $distro, spec: $spec}'
 	done
 done | jq -rsc '"mymatrix=" + ({include: .} | tojson)'
