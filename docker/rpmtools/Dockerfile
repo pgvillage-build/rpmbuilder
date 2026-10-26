@@ -4,7 +4,7 @@ FROM ${BASEIMAGE}
 RUN mkdir -p /etc/dnf/libdnf5.conf.d/ && \
     echo -e  '[main]\nfastestmirrors=true ' > /etc/dnf/libdnf5.conf.d/80-local.conf && \
     dnf update -y && \
-    dnf install -y pinentry rpmdevtools rpm-build rpm-sign jq unzip
+    dnf install -y pinentry gnupg2 rpmdevtools rpm-build rpm-sign jq unzip
 
 # build dependencies for packages built from source (rpmbuilder/templates/go.spec.j2, e.g. wal-g-pg);
 # el needs epel (libsodium-devel) and crb (lzo-devel), fedora has it all
