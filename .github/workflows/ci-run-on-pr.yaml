@@ -44,46 +44,14 @@ jobs:
     strategy:
       matrix:
         include:
-          #- baseimage: rockylinux
-          #  version: "8"
-          #  image: rockylinux/rockylinux:8
-          #  arch: amd64
-          #- baseimage: rockylinux
-          #  version: "9"
-          #  image: rockylinux/rockylinux:9
-          #  arch: amd64
-          #- baseimage: rockylinux
-          #  version: "10"
-          #  image: rockylinux/rockylinux:10
-          #  arch: amd64
-          #- baseimage: fedora
-          #  version: "43"
-          #  image: fedora:43
-          #  arch: amd64
           - baseimage: fedora
             version: "44"
             image: fedora:44
             arch: amd64
-          #- baseimage: rockylinux
-          #  version: "8"
-          #  image: rockylinux/rockylinux:8
-          #  arch: arm64
-          #- baseimage: rockylinux
-          #  version: "9"
-          #  image: rockylinux/rockylinux:9
-          #  arch: arm64
           - baseimage: rockylinux
             version: "10"
             image: rockylinux/rockylinux:10
             arch: arm64
-          #- baseimage: fedora
-          #  version: "43"
-          #  image: fedora:43
-          #  arch: arm64
-          #- baseimage: fedora
-          #  version: "44"
-          #  image: fedora:44
-          #  arch: arm64
     env:
       IMAGEARTIFACT: builder-${{ matrix.baseimage }}-${{ matrix.version }}-${{ matrix.arch }}
       IMAGETAG: builder-${{ matrix.baseimage }}:${{ matrix.version }}
