@@ -18,6 +18,38 @@ The releases are not hardcoded: a release builds for every release of these dist
 
 ## Install
 
+The packages put their binaries in `/usr/bin` (up to v0.3.8 in `/usr/local/bin`; the rpm Release went to 2 for the
+move, so an upgrade moves them).
+
+### From repo.pgvillage.org
+
+Every release is served as a dnf and a zypper repository, with signed repodata:
+
+- `https://repo.pgvillage.org/yum/<tag>/<distro>/<arch>/` for Rocky Linux, RHEL and Fedora, e.g.
+  https://repo.pgvillage.org/yum/v0.3.8/
+- `https://repo.pgvillage.org/zypp/<tag>/<distro>/<arch>/` for openSUSE Leap
+
+`latest` instead of a tag follows the newest release.
+
+```
+# Rocky Linux, RHEL and Fedora
+sudo tee /etc/yum.repos.d/pgvillage.repo <<'EOF'
+[pgvillage]
+name=pgvillage
+baseurl=https://repo.pgvillage.org/yum/v0.3.8/el9/$basearch/
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://repo.pgvillage.org/yum/pgvillage.asc
+EOF
+sudo dnf install pgfga
+
+# openSUSE Leap
+sudo zypper ar https://repo.pgvillage.org/zypp/v0.3.8/lp160/$(uname -m)/ pgvillage
+sudo zypper install pgfga
+```
+
+### From a release tarball
+
 Each [release](https://github.com/pgvillage-build/rpmbuilder/releases) has one tarball per distribution release,
 `pgvillage-rpms-<tag>-<distro>.tar.gz`, and a `SHA256SUMS` file. A tarball unpacks to
 `pgvillage-rpms-<tag>-<distro>/<arch>/`, with the rpms and a `repodata/` with a signed `repomd.xml`, so every

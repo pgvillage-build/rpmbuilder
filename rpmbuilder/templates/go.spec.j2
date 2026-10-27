@@ -5,7 +5,6 @@
 # The prep section downloads go {{ go_version }} and clones the tag, so it needs network access. The build
 # dependencies are not BuildRequires: they are baked into the builder image (docker/rpmtools/Dockerfile),
 # which runs rpmbuild as a non-root user.
-%global _prefix /usr/local
 # go strips its own binaries and adds no GNU build id
 %global debug_package %{nil}
 %global _missing_build_ids_terminate_build 0
@@ -19,7 +18,8 @@ Summary: {{ description or package_name }}
 Name: {{ package_name }}
 # strip the tag's leading "v"
 Version: %(v="{{ version }}"; echo "${v#v}")
-Release: {{ revision | default('1') }}%{?dist}
+# 2: the binaries moved from /usr/local/bin to /usr/bin
+Release: {{ revision | default('2') }}%{?dist}
 License: {{ license | default('Apache-2.0') }}
 Group: {{ group | default('Unspecified') }}
 Url: {{ url }}
