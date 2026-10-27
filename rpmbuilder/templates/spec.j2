@@ -1,9 +1,9 @@
-%global _prefix /usr/local
 Summary: {{ description or package_name }}
 Name: {{ package_name }}
 # strip the tag's leading "v"
 Version: %(v="{{ version }}"; echo "${v#v}")
-Release: 1%{?dist}
+# 2: the binaries moved from /usr/local/bin to /usr/bin
+Release: 2%{?dist}
 License: {{ license }}
 Group: {{ group | default('Unspecified') }}
 Url: {{ url }}
