@@ -260,6 +260,16 @@ jobs:
           path: out/
           merge-multiple: true
 
+      - name: install createrepo_c
+        run: sudo apt-get update && sudo apt-get install -y createrepo-c
+
+      # zypper needs a signed repomd.xml; the repo server serves these repodata as is
+      - name: create and sign the repodata
+        run: scripts/createrepo.sh out
+        env:
+          GPG_PASSPHRASE: "${{ secrets.GPG_PASSPHRASE }}"
+          GPG_KEY_B64: "${{ secrets.GPG_KEY_B64 }}"
+
       - name: create one tarball per distro release
         run: scripts/package_rpms.sh out "pr${{ github.event.number }}" dist
 
