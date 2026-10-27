@@ -20,7 +20,9 @@ The releases are not hardcoded: a release builds for every release of these dist
 
 Each [release](https://github.com/pgvillage-build/rpmbuilder/releases) has one tarball per distribution release,
 `pgvillage-rpms-<tag>-<distro>.tar.gz`, and a `SHA256SUMS` file. A tarball unpacks to
-`pgvillage-rpms-<tag>-<distro>/<arch>/*.rpm`.
+`pgvillage-rpms-<tag>-<distro>/<arch>/`, with the rpms and a `repodata/` with a signed `repomd.xml`, so every
+`<arch>/` directory is a repository for dnf and zypper. Serve it as is: running createrepo on it again drops the
+signature, and zypper refuses a repository with an unsigned `repomd.xml`.
 
 ```
 TAG=v1.2.3      # the release
