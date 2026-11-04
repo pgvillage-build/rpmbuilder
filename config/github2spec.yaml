@@ -110,7 +110,7 @@ repositories:
     organization: rustfs
     repository: cli
     # renovate: datasource=github-releases depName=rustfs/cli
-    target_release: tags/v0.1.36
+    target_release: tags/v0.1.37
     asset_filter: '{{ package_name }}-linux-{{ binary_arch }}-{{ version }}.tar.gz$'
     # the binary is called rc, so `dnf install rc` installs this package too
     provides:
@@ -122,7 +122,7 @@ repositories:
   pg_tps_optimizer:
     organization: pgvillage-tools
     # renovate: datasource=github-releases depName=pgvillage-tools/pg_tps_optimizer
-    target_release: tags/v1.0.1
+    target_release: tags/v1.1.0
     asset_filter: "{{ repository }}-{{ version | replace('v', '') }}-{{ package_arch }}-unknown-linux-musl.tar.gz$"
     files:
       - src: "{{ repository }}-{{ version | replace('v', '') }}-{{ package_arch }}-unknown-linux-musl/{{ repository }}"
@@ -134,7 +134,7 @@ repositories:
     # built from source; libsodium, lzo and brotli are linked statically, so the rpm only needs libc
     template: /host/rpmbuilder/templates/go.spec.j2
     # renovate: datasource=github-releases depName=pgvillage-tools/wal-g versioning=loose
-    target_release: tags/v3.0.9b
+    target_release: tags/v3.0.9c
     # renovate: datasource=golang-version depName=go
     go_version: 1.27.3
     description: Archival and Restoration for PostgreSQL databases
