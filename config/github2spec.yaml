@@ -33,7 +33,7 @@ repositories:
   pgav:
     organization: pgvillage-tools
     # renovate: datasource=github-releases depName=pgvillage-tools/pgav
-    target_release: tags/v0.1.2
+    target_release: tags/v0.1.4
     asset_filter: '{{ repository }}_{{ version }}_Linux-{{ package_arch }}.tar.gz$'
     files:
       - src: '{{ repository }}'
