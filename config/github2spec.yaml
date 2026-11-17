@@ -60,7 +60,7 @@ repositories:
   pgcustodian:
     organization: pgvillage-tools
     # renovate: datasource=github-releases depName=pgvillage-tools/pgcustodian
-    target_release: tags/v0.1.2
+    target_release: tags/v0.1.3
     asset_filter: '{{ repository }}_{{ version }}_linux_{{ binary_arch }}.tar.gz$'
     files:
       - src: '{{ repository }}'
