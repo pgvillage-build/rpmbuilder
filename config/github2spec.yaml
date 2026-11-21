@@ -34,9 +34,9 @@ repositories:
     organization: pgvillage-tools
     # renovate: datasource=github-releases depName=pgvillage-tools/pgav
     target_release: tags/v0.1.4
-    asset_filter: '{{ repository }}_{{ version }}_Linux-{{ package_arch }}.tar.gz$'
+    asset_filter: "{{ repository }}-{{ version | replace('v', '') }}-{{ package_arch }}-unknown-linux-musl.tar.gz$"
     files:
-      - src: '{{ repository }}'
+      - src: "{{ repository }}-{{ version | replace('v', '') }}-{{ package_arch }}-unknown-linux-musl/{{ repository }}"
         dest: '%{_bindir}/{{ repository }}'
         mode: '0755'
   pgroute66:
