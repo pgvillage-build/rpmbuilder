@@ -42,7 +42,7 @@ repositories:
   pgroute66:
     organization: pgvillage-tools
     # renovate: datasource=github-releases depName=pgvillage-tools/pgroute66
-    target_release: tags/v0.8.28
+    target_release: tags/v0.8.31
     asset_filter: '{{ repository }}_{{ version }}_linux_{{ binary_arch }}.tar.gz$'
     files:
       - src: '{{ repository }}'
